@@ -11,12 +11,14 @@
 
 interface KeywordEntry {
   keyword: string;
+  aliases?: string[];
   guidance: string[];
 }
 
 const CRITICAL_KEYWORDS: KeywordEntry[] = [
   {
     keyword: '胸痛',
+    aliases: ['胸口痛', '胸口很痛', '心口痛', '心口疼', '胸疼', '胸口疼'],
     guidance: [
       '请立即停止一切活动，坐下或半卧休息',
       '如果有硝酸甘油，请立即舌下含服一片',
@@ -47,6 +49,7 @@ const CRITICAL_KEYWORDS: KeywordEntry[] = [
   },
   {
     keyword: '摔倒了',
+    aliases: ['摔倒', '摔了', '跌倒', '跌了一跤', '摔了一跤'],
     guidance: [
       '请不要急于站起来，先感受一下是否有疼痛',
       '如果感觉哪里疼痛，请不要移动那个部位',
@@ -120,6 +123,7 @@ const CRITICAL_KEYWORDS: KeywordEntry[] = [
 const HIGH_KEYWORDS: KeywordEntry[] = [
   {
     keyword: '头很痛',
+    aliases: ['头痛', '头疼', '头很疼', '偏头痛', '头痛欲裂'],
     guidance: [
       '请立即坐下或躺下休息',
       '在安静、光线较暗的环境中休息',
@@ -186,6 +190,7 @@ const HIGH_KEYWORDS: KeywordEntry[] = [
 const MEDIUM_KEYWORDS: KeywordEntry[] = [
   {
     keyword: '不舒服',
+    aliases: ['很不舒服', '不太舒服', '身体不舒服', '感觉不好'],
     guidance: [
       '请先坐下休息一会儿',
       '喝一杯温水',
@@ -253,27 +258,40 @@ export interface EmergencyDetectionResult {
 // ============================
 
 /**
+ * Check if a message matches a keyword entry (including aliases).
+ */
+function matchesKeyword(message: string, entry: KeywordEntry): boolean {
+  if (message.includes(entry.keyword)) return true;
+  if (entry.aliases) {
+    for (const alias of entry.aliases) {
+      if (message.includes(alias)) return true;
+    }
+  }
+  return false;
+}
+
+/**
  * Detect emergency keywords in a user message.
  * Returns the highest-priority match found.
  */
 export function detectEmergency(message: string): EmergencyDetectionResult {
   // Check critical level first
   for (const entry of CRITICAL_KEYWORDS) {
-    if (message.includes(entry.keyword)) {
+    if (matchesKeyword(message, entry)) {
       return { isEmergency: true, level: 'critical', keyword: entry.keyword };
     }
   }
 
   // Check high level
   for (const entry of HIGH_KEYWORDS) {
-    if (message.includes(entry.keyword)) {
+    if (matchesKeyword(message, entry)) {
       return { isEmergency: true, level: 'high', keyword: entry.keyword };
     }
   }
 
   // Check medium level
   for (const entry of MEDIUM_KEYWORDS) {
-    if (message.includes(entry.keyword)) {
+    if (matchesKeyword(message, entry)) {
       return { isEmergency: true, level: 'medium', keyword: entry.keyword };
     }
   }
