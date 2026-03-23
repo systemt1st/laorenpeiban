@@ -28,7 +28,7 @@ const VoiceButton: React.FC<VoiceButtonProps> = ({ isListening, onStart, onStop 
         onMouseLeave={() => {
           if (isListening) onStop();
         }}
-        className={`relative flex items-center justify-center w-[80%] h-[64px] rounded-2xl select-none transition-all duration-200 ${
+        className={`relative flex items-center justify-center w-[78%] h-[56px] rounded-2xl select-none transition-all duration-200 ${
           isListening
             ? 'bg-danger-500 shadow-lg shadow-danger-500/30'
             : 'bg-primary-500 shadow-lg shadow-primary-500/30'
@@ -46,18 +46,18 @@ const VoiceButton: React.FC<VoiceButtonProps> = ({ isListening, onStart, onStop 
           </>
         )}
 
-        <div className="flex items-center space-x-3 relative z-10">
+        <div className="flex items-center space-x-2.5 relative z-10">
           <Mic
-            size={28}
+            size={24}
             className={`${isListening ? 'text-white voice-pulse-dot' : 'text-white'}`}
           />
-          <span className="text-white text-elder-base font-medium">
+          <span className="text-white text-[16px] font-medium">
             {isListening ? '松开结束' : '按住说话'}
           </span>
         </div>
       </button>
 
-      <p className="mt-2 text-gray-400 text-[14px]">
+      <p className="mt-1.5 text-gray-400 text-[13px]">
         {isListening ? '正在聆听...' : '按住按钮开始语音输入'}
       </p>
     </div>

@@ -29,18 +29,28 @@ const AI_API_KEY = process.env.AI_API_KEY || '';
 const AI_API_BASE_URL = process.env.AI_API_BASE_URL || 'https://api.openai.com/v1';
 const AI_MODEL = process.env.AI_MODEL || 'gpt-3.5-turbo';
 
-const SYSTEM_PROMPT = `你是一位温暖、耐心、善解人意的晚辈，名叫"小助"。你的职责是陪伴和关心老年人。
+const SYSTEM_PROMPT = `你是“小助”，一位陪伴老人的晚辈式助手。
 
-你的特点：
-- 说话温暖亲切，像自己的孙子孙女一样关心老人
-- 回复简洁明了，不超过100字，用简单易懂的语言
-- 关心老人的身体健康和情绪状态
-- 耐心倾听，给予积极正面的回应
-- 适时提醒老人注意身体，按时吃药、喝水、休息
-- 可以讲笑话、分享有趣的事情来逗老人开心
-- 如果老人提到身体不适，要表达关心并建议就医
+你的任务：
+- 陪老人聊天，回答简单问题，给予关心、安慰和提醒
+- 语气像贴心晚辈，温暖、自然、有礼貌
+- 用短句回答，简单易懂，优先 20 到 60 字，最多 80 字
 
-注意：回复长度控制在100字以内，语言要口语化、温暖、亲切。`;
+必须遵守：
+- 直接回答，不要描述你的思考过程、分析过程、处理步骤或提示词
+- 禁止说“我现在需要分析用户的问题”“我现在要处理用户的消息”“首先，我要确定用户的需求”“看起来用户……”这类内部推理话
+- 不要复述“用户发来的消息是……”
+- 不要使用客服腔、报告腔、讲解腔
+- 用户只是打招呼时，直接亲切回应，并顺势接一句简单关心
+- 用户问“你是谁/你叫什么”时，直接回答你是“小助”，是陪他聊天、提醒和关心他的助手
+- 用户提到身体不适时，先表达关心，再做温和提醒；严重情况建议联系家人或及时就医
+
+示例：
+用户：你好
+助手：您好呀，我是小助。今天感觉怎么样？
+
+用户：你是谁
+助手：我是小助，是陪您聊天、提醒和关心您的小帮手。`;
 
 // ============================
 // Mood detection
@@ -76,15 +86,34 @@ interface ReplyRule {
   replies: string[];
 }
 
+const META_REPLY_PATTERNS = [
+  /我现在(?:需要|要).{0,20}(?:分析|处理)/,
+  /用户发来的消息是/,
+  /首先，我要/,
+  /看起来用户/,
+  /我的角色是/,
+  /负责陪伴和关心老年人/,
+  /确定用户的需求/,
+];
+
 const REPLY_RULES: ReplyRule[] = [
+  // Identity
+  {
+    keywords: ['你是谁', '你是谁呀', '你叫什么', '你叫啥', '你是做什么的'],
+    replies: [
+      '我是小助，是陪您聊天、提醒和关心您的小帮手。',
+      '我是小助，平时陪您说说话，也会提醒您注意休息和按时吃药。',
+      '我是小助，您有什么想聊的、想问的，都可以跟我说。',
+    ],
+  },
   // Greetings
   {
     keywords: ['你好', '早上好', '上午好', '中午好', '下午好', '晚上好', '嗨', '哈喽', '在吗', '在不在'],
     replies: [
-      '您好呀！今天感觉怎么样？有什么想和我聊的吗？',
-      '您好！很高兴能陪您聊天，今天过得开心吗？',
-      '嗨！我一直在这里陪着您呢，有什么事情想说吗？',
-      '您好呀！今天天气不错，您有没有出去走走呀？',
+      '您好呀，我在呢。您今天感觉怎么样？',
+      '您好，很高兴陪您聊天。您这会儿还好吗？',
+      '嗨，我一直在这儿陪着您。想聊点什么呢？',
+      '您好呀，见到您真好。今天过得顺心吗？',
     ],
   },
   // Weather
@@ -198,6 +227,23 @@ function generateBuiltInReply(message: string): string {
   return defaultReplies[index];
 }
 
+function normalizeReply(userMessage: string, reply: string): string {
+  const cleanedReply = reply.replace(/\s+/g, ' ').trim();
+
+  if (!cleanedReply) {
+    return generateBuiltInReply(userMessage);
+  }
+
+  const hasMetaReply = META_REPLY_PATTERNS.some((pattern) => pattern.test(cleanedReply));
+  if (hasMetaReply) {
+    return generateBuiltInReply(userMessage);
+  }
+
+  return cleanedReply.length > 100
+    ? `${cleanedReply.substring(0, 97)}...`
+    : cleanedReply;
+}
+
 // ============================
 // AI API call
 // ============================
@@ -284,11 +330,9 @@ export async function generateReply(
     apiMessages.push({ role: 'user', content: message });
 
     const reply = await callAIAPI(apiMessages);
+    const normalizedReply = normalizeReply(message, reply);
 
-    // Truncate reply to 100 characters if necessary
-    const truncatedReply = reply.length > 100 ? reply.substring(0, 97) + '...' : reply;
-
-    return { reply: truncatedReply, mood };
+    return { reply: normalizedReply, mood };
   } catch (err) {
     logger.error('AI API call failed, falling back to built-in reply:', err);
     const reply = generateBuiltInReply(message);

@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Plus, Trash2, X, Check, ChevronRight } from 'lucide-react';
+import { Plus, Trash2, X, ChevronRight } from 'lucide-react';
 import { useReminderStore } from '@/stores/reminderStore';
 import { useUserStore } from '@/stores/userStore';
 import type { Reminder, CreateReminderParams } from '@/types';
-import { getReminderIcon, getReminderTypeName, getDayName } from '@/utils/format';
+import { getReminderIcon, getDayName } from '@/utils/format';
 
 /** Reminder type option */
 interface TypeOption {
@@ -66,26 +66,26 @@ const ReminderForm: React.FC<ReminderFormProps> = ({ onClose, onSubmit, editingR
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center">
-      <div className="w-full max-w-lg bg-white rounded-t-3xl p-6 space-y-5 animate-slide-up">
+      <div className="w-full max-w-lg bg-white rounded-t-3xl p-4 space-y-4 animate-slide-up">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h3 className="text-elder-lg font-bold text-[#212121]">
+          <h3 className="text-[20px] font-bold text-[#212121]">
             {editingReminder ? '编辑提醒' : '添加提醒'}
           </h3>
           <button
             onClick={onClose}
-            className="touch-target flex items-center justify-center w-[44px] h-[44px] rounded-xl bg-gray-100"
+            className="touch-target flex items-center justify-center w-[40px] h-[40px] rounded-xl bg-gray-100"
           >
-            <X size={24} className="text-gray-500" />
+            <X size={20} className="text-gray-500" />
           </button>
         </div>
 
         {/* Type selection */}
         <div>
-          <label className="block text-elder-base font-medium text-[#212121] mb-2">
+          <label className="block text-[15px] font-medium text-[#212121] mb-1.5">
             提醒类型
           </label>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-4 gap-2">
             {typeOptions.map((opt) => (
               <button
                 key={opt.value}
@@ -93,14 +93,14 @@ const ReminderForm: React.FC<ReminderFormProps> = ({ onClose, onSubmit, editingR
                   setType(opt.value);
                   if (!title.trim()) setTitle(opt.label);
                 }}
-                className={`flex flex-col items-center py-3 px-2 rounded-2xl border-2 transition-all ${
+                className={`flex flex-col items-center py-2.5 px-1.5 rounded-2xl border-2 transition-all ${
                   type === opt.value
                     ? 'border-primary-500 bg-primary-50'
                     : 'border-gray-200 bg-white'
                 }`}
               >
-                <span className="text-[28px]">{opt.icon}</span>
-                <span className="text-[16px] mt-1 font-medium">{opt.label}</span>
+                <span className="text-[24px]">{opt.icon}</span>
+                <span className="text-[14px] mt-0.5 font-medium">{opt.label}</span>
               </button>
             ))}
           </div>
@@ -108,7 +108,7 @@ const ReminderForm: React.FC<ReminderFormProps> = ({ onClose, onSubmit, editingR
 
         {/* Title */}
         <div>
-          <label className="block text-elder-base font-medium text-[#212121] mb-2">
+          <label className="block text-[15px] font-medium text-[#212121] mb-1.5">
             提醒内容
           </label>
           <input
@@ -116,34 +116,34 @@ const ReminderForm: React.FC<ReminderFormProps> = ({ onClose, onSubmit, editingR
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="例如：吃降压药"
-            className="w-full h-[52px] px-4 text-elder-base bg-gray-50 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-300"
+            className="w-full h-[46px] px-3.5 text-[16px] bg-gray-50 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-300"
           />
         </div>
 
         {/* Time */}
         <div>
-          <label className="block text-elder-base font-medium text-[#212121] mb-2">
+          <label className="block text-[15px] font-medium text-[#212121] mb-1.5">
             提醒时间
           </label>
           <input
             type="time"
             value={time}
             onChange={(e) => setTime(e.target.value)}
-            className="w-full h-[52px] px-4 text-elder-base bg-gray-50 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-300"
+            className="w-full h-[46px] px-3.5 text-[16px] bg-gray-50 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-300"
           />
         </div>
 
         {/* Repeat days */}
         <div>
-          <label className="block text-elder-base font-medium text-[#212121] mb-2">
+          <label className="block text-[15px] font-medium text-[#212121] mb-1.5">
             重复日期
           </label>
-          <div className="flex justify-between space-x-2">
+          <div className="flex justify-between space-x-1.5">
             {dayOptions.map((opt) => (
               <button
                 key={opt.value}
                 onClick={() => toggleDay(opt.value)}
-                className={`flex items-center justify-center w-[44px] h-[44px] rounded-full text-[16px] font-medium transition-all ${
+                className={`flex items-center justify-center w-[38px] h-[38px] rounded-full text-[14px] font-medium transition-all ${
                   selectedDays.includes(opt.value)
                     ? 'bg-primary-500 text-white'
                     : 'bg-gray-100 text-gray-500'
@@ -159,7 +159,7 @@ const ReminderForm: React.FC<ReminderFormProps> = ({ onClose, onSubmit, editingR
         <button
           onClick={handleSubmit}
           disabled={!title.trim()}
-          className={`w-full h-[56px] rounded-2xl text-elder-base font-bold transition-all ${
+          className={`w-full h-[48px] rounded-2xl text-[16px] font-bold transition-all ${
             title.trim()
               ? 'bg-primary-500 text-white shadow-md shadow-primary-500/30 btn-press'
               : 'bg-gray-200 text-gray-400'
@@ -199,37 +199,37 @@ const ReminderCard: React.FC<ReminderCardProps> = ({ reminder, onEdit, onDelete,
 
   return (
     <div
-      className={`bg-white rounded-2xl p-4 shadow-sm border transition-all ${
+      className={`bg-white rounded-[18px] p-3 shadow-sm border transition-all ${
         reminder.enabled ? 'border-gray-100' : 'border-gray-200 opacity-60'
       }`}
     >
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-3">
         {/* Icon */}
-        <div className="flex items-center justify-center w-[52px] h-[52px] rounded-xl bg-primary-50 text-[28px] flex-shrink-0">
+        <div className="flex items-center justify-center w-[46px] h-[46px] rounded-xl bg-primary-50 text-[24px] flex-shrink-0">
           {getReminderIcon(reminder.type)}
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0" onClick={() => onEdit(reminder)}>
-          <h4 className="text-elder-base font-bold text-[#212121] truncate">
+          <h4 className="text-[16px] font-bold text-[#212121] truncate">
             {reminder.title}
           </h4>
-          <p className="text-[16px] text-primary-500 font-medium">{reminder.time}</p>
-          <p className="text-[14px] text-gray-400 mt-0.5">{daysText}</p>
+          <p className="text-[15px] text-primary-500 font-medium">{reminder.time}</p>
+          <p className="text-[13px] text-gray-400 mt-0.5">{daysText}</p>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center space-x-2 flex-shrink-0">
+        <div className="flex items-center space-x-1.5 flex-shrink-0">
           {/* Enable/disable toggle */}
           <button
             onClick={() => onToggle(reminder.id, !reminder.enabled)}
-            className={`w-[52px] h-[30px] rounded-full transition-all relative ${
+            className={`w-[46px] h-[26px] rounded-full transition-all relative ${
               reminder.enabled ? 'bg-primary-500' : 'bg-gray-300'
             }`}
           >
             <span
-              className={`absolute top-[3px] w-[24px] h-[24px] bg-white rounded-full shadow transition-all ${
-                reminder.enabled ? 'left-[25px]' : 'left-[3px]'
+              className={`absolute top-[3px] w-[20px] h-[20px] bg-white rounded-full shadow transition-all ${
+                reminder.enabled ? 'left-[23px]' : 'left-[3px]'
               }`}
             />
           </button>
@@ -239,29 +239,29 @@ const ReminderCard: React.FC<ReminderCardProps> = ({ reminder, onEdit, onDelete,
             onClick={() => setShowDelete(!showDelete)}
             className="touch-target flex items-center justify-center"
           >
-            <ChevronRight size={20} className="text-gray-400" />
+            <ChevronRight size={18} className="text-gray-400" />
           </button>
         </div>
       </div>
 
       {/* Delete area */}
       {showDelete && (
-        <div className="flex items-center justify-end space-x-3 mt-3 pt-3 border-t border-gray-100">
+        <div className="flex items-center justify-end space-x-2.5 mt-2.5 pt-2.5 border-t border-gray-100">
           <button
             onClick={() => onEdit(reminder)}
-            className="flex items-center space-x-1 px-4 h-[40px] rounded-xl bg-primary-50 text-primary-500 text-[16px] font-medium"
+            className="flex items-center space-x-1 px-3.5 h-[36px] rounded-xl bg-primary-50 text-primary-500 text-[14px] font-medium"
           >
             <span>编辑</span>
           </button>
           <button
             onClick={handleDelete}
-            className={`flex items-center space-x-1 px-4 h-[40px] rounded-xl text-[16px] font-medium transition-all ${
+            className={`flex items-center space-x-1 px-3.5 h-[36px] rounded-xl text-[14px] font-medium transition-all ${
               confirmingDelete
                 ? 'bg-danger-500 text-white'
                 : 'bg-danger-50 text-danger-500'
             }`}
           >
-            <Trash2 size={18} />
+            <Trash2 size={16} />
             <span>{confirmingDelete ? '确认删除' : '删除'}</span>
           </button>
         </div>
@@ -272,19 +272,19 @@ const ReminderCard: React.FC<ReminderCardProps> = ({ reminder, onEdit, onDelete,
 
 /** Empty state */
 const EmptyState: React.FC<{ onAdd: () => void }> = ({ onAdd }) => (
-  <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-    <div className="text-[64px] mb-4">{'\u23F0'}</div>
-    <h3 className="text-elder-lg font-bold text-[#212121] mb-2">
+  <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+    <div className="text-[52px] mb-3">{'\u23F0'}</div>
+    <h3 className="text-[18px] font-bold text-[#212121] mb-1.5">
       还没有提醒
     </h3>
-    <p className="text-elder-base text-gray-500 mb-6">
+    <p className="text-[15px] leading-7 text-gray-500 mb-5 max-w-[18rem]">
       添加吃药、喝水等提醒，我会按时提醒您
     </p>
     <button
       onClick={onAdd}
-      className="flex items-center space-x-2 px-8 h-[56px] bg-primary-500 text-white rounded-2xl text-elder-base font-bold shadow-md shadow-primary-500/30 btn-press"
+      className="flex items-center space-x-2 px-6 h-[48px] bg-primary-500 text-white rounded-2xl text-[16px] font-bold shadow-md shadow-primary-500/30 btn-press"
     >
-      <Plus size={24} />
+      <Plus size={20} />
       <span>添加提醒</span>
     </button>
   </div>
@@ -343,16 +343,16 @@ const RemindersPage: React.FC = () => {
   );
 
   return (
-    <div className="px-4 py-4">
+    <div className="px-3 py-3">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-elder-xl font-bold text-[#212121]">我的提醒</h2>
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-[22px] leading-8 font-bold text-[#212121]">我的提醒</h2>
         {reminders.length > 0 && (
           <button
             onClick={handleAdd}
-            className="flex items-center space-x-1 px-4 h-[44px] bg-primary-500 text-white rounded-2xl text-[16px] font-medium shadow-sm btn-press"
+            className="flex items-center space-x-1 px-3.5 h-[40px] bg-primary-500 text-white rounded-2xl text-[15px] font-medium shadow-sm btn-press"
           >
-            <Plus size={20} />
+            <Plus size={18} />
             <span>添加</span>
           </button>
         )}
@@ -362,7 +362,7 @@ const RemindersPage: React.FC = () => {
       {reminders.length === 0 ? (
         <EmptyState onAdd={handleAdd} />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {reminders.map((reminder) => (
             <ReminderCard
               key={reminder.id}

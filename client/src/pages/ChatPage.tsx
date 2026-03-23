@@ -5,16 +5,17 @@ import { useChatStore } from '@/stores/chatStore';
 import { useUserStore } from '@/stores/userStore';
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
 import VoiceButton from '@/components/VoiceButton';
+import SOSButton from '@/components/SOSButton';
 import { formatTime, getGreeting } from '@/utils/format';
 
 /** Three-dot thinking animation */
 const ThinkingBubble: React.FC = () => (
-  <div className="flex items-start space-x-2 mb-4">
-    <div className="bg-[#E3F2FD] rounded-2xl rounded-tl-sm px-5 py-3 max-w-[80%]">
+  <div className="flex items-start space-x-2 mb-3">
+    <div className="bg-[#E3F2FD] rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[78%]">
       <div className="flex items-center space-x-1.5">
-        <span className="w-2.5 h-2.5 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-        <span className="w-2.5 h-2.5 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-        <span className="w-2.5 h-2.5 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+        <span className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+        <span className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+        <span className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
       </div>
     </div>
   </div>
@@ -108,17 +109,25 @@ const ChatPage: React.FC = () => {
   const greeting = getGreeting(user?.nickname);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-56px-70px)]">
+    <div className="flex flex-col h-[calc(100vh-56px-64px)]">
       {/* Greeting header */}
-      <div className="px-4 py-3 bg-white border-b border-gray-100">
-        <h2 className="text-elder-lg font-bold text-[#212121]">{greeting}</h2>
-        <p className="text-[16px] text-gray-500 mt-0.5">有什么我可以帮您的吗？</p>
+      <div className="px-3 py-2.5 bg-white border-b border-gray-100">
+        <div className="flex items-start justify-between gap-2.5">
+          <div className="min-w-0">
+            <h2 className="text-[20px] leading-7 font-bold text-[#212121]">{greeting}</h2>
+            <p className="text-[14px] leading-5 text-gray-500 mt-0.5">有什么我可以帮您的吗？</p>
+          </div>
+          <div className="flex-shrink-0">
+            <SOSButton variant="inline" compact />
+          </div>
+        </div>
+        <p className="text-[12px] text-danger-400 mt-1.5">紧急情况长按 SOS 2 秒</p>
       </div>
 
       {/* Messages area */}
       <div
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto px-4 py-4 space-y-4 scrollbar-thin"
+        className="flex-1 overflow-y-auto px-3 py-3 space-y-3 scrollbar-thin"
       >
         {messages.map((msg) => {
           const isUser = msg.role === 'user';
@@ -127,8 +136,8 @@ const ChatPage: React.FC = () => {
           if (isSystem) {
             return (
               <div key={msg.id} className="flex justify-center">
-                <div className="bg-gray-100 rounded-xl px-4 py-2 max-w-[90%]">
-                  <p className="text-[14px] text-gray-500 text-center">{msg.content}</p>
+                <div className="bg-gray-100 rounded-xl px-3 py-1.5 max-w-[90%]">
+                  <p className="text-[13px] text-gray-500 text-center">{msg.content}</p>
                 </div>
               </div>
             );
@@ -140,17 +149,17 @@ const ChatPage: React.FC = () => {
               className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[85%] ${
+                className={`max-w-[82%] ${
                   isUser
                     ? 'bg-[#E8F5E9] rounded-2xl rounded-tr-sm'
                     : 'bg-[#E3F2FD] rounded-2xl rounded-tl-sm'
-                } px-4 py-3`}
+                } px-3.5 py-2.5`}
               >
-                <p className="text-elder-base text-[#212121] leading-relaxed whitespace-pre-wrap break-words">
+                <p className="text-[16px] text-[#212121] leading-7 whitespace-pre-wrap break-words">
                   {msg.content}
                 </p>
                 <p
-                  className={`text-[13px] mt-1.5 ${
+                  className={`text-[12px] mt-1 ${
                     isUser ? 'text-right text-success-600' : 'text-primary-400'
                   }`}
                 >
@@ -169,7 +178,7 @@ const ChatPage: React.FC = () => {
       </div>
 
       {/* Input area */}
-      <div className="bg-white border-t border-gray-200 px-4 py-3 space-y-3">
+      <div className="bg-white border-t border-gray-200 px-3 py-2.5 space-y-2">
         {/* Voice button */}
         <VoiceButton
           isListening={isListening}
@@ -178,7 +187,7 @@ const ChatPage: React.FC = () => {
         />
 
         {/* Text input row */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2">
           <input
             ref={inputRef}
             type="text"
@@ -186,19 +195,19 @@ const ChatPage: React.FC = () => {
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="输入消息..."
-            className="flex-1 h-[52px] px-4 text-elder-base bg-gray-50 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent transition-all"
+            className="flex-1 h-[46px] px-3.5 text-[16px] bg-gray-50 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent transition-all"
           />
           <button
             onClick={handleSend}
             disabled={!inputText.trim() || isLoading}
-            className={`flex items-center justify-center w-[52px] h-[52px] rounded-2xl transition-all ${
+            className={`flex items-center justify-center w-[46px] h-[46px] rounded-2xl transition-all ${
               inputText.trim() && !isLoading
                 ? 'bg-primary-500 text-white shadow-md shadow-primary-500/30 btn-press'
                 : 'bg-gray-200 text-gray-400'
             }`}
             aria-label="发送消息"
           >
-            <Send size={24} />
+            <Send size={20} />
           </button>
         </div>
       </div>

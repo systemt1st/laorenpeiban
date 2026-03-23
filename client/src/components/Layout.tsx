@@ -18,6 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     location.pathname === '/family' ||
     location.pathname.startsWith('/family/') ||
     location.pathname === '/emergency';
+  const showFloatingSOS = location.pathname !== '/' && location.pathname !== '/chat';
 
   if (hideLayout) {
     return <>{children}</>;
@@ -42,14 +43,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 pt-[56px] pb-[70px] overflow-y-auto scrollbar-thin">
+      <main className="flex-1 pt-[56px] pb-[64px] overflow-y-auto scrollbar-thin">
         <div className="max-w-lg mx-auto">
           {children}
         </div>
       </main>
 
       {/* SOS floating button */}
-      <SOSButton />
+      {showFloatingSOS && <SOSButton />}
 
       {/* Bottom navigation */}
       <NavBar />

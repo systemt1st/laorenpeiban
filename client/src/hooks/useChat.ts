@@ -71,7 +71,7 @@ function generateGreeting(nickname?: string): string {
   }
 
   const name = nickname || '您';
-  return `${greeting}，${name}！我是您的陪伴助手，有什么我可以帮您的吗？您可以跟我聊天，或者问我任何问题。`;
+  return `${greeting}，${name}！我是小助，陪您聊天、提醒和关心您。您想聊点什么？`;
 }
 
 /**

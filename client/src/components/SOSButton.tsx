@@ -1,7 +1,15 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const SOSButton: React.FC = () => {
+interface SOSButtonProps {
+  variant?: 'floating' | 'inline';
+  compact?: boolean;
+}
+
+const SOSButton: React.FC<SOSButtonProps> = ({
+  variant = 'floating',
+  compact = false,
+}) => {
   const navigate = useNavigate();
   const [pressing, setPressing] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -10,6 +18,9 @@ const SOSButton: React.FC = () => {
   const triggeredRef = useRef(false);
 
   const HOLD_DURATION = 2000; // 2 seconds
+  const buttonSize = compact ? 48 : 60;
+  const radius = compact ? 19 : 25;
+  const svgSize = buttonSize;
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
@@ -57,28 +68,23 @@ const SOSButton: React.FC = () => {
     };
   }, [clearTimer]);
 
-  // SVG circle parameters
-  const radius = 30;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
-
-  return (
-    <div className="fixed right-4 z-40" style={{ bottom: '90px' }}>
-      {/* Pulse animation rings */}
-      {!pressing && (
+  const button = (
+    <div className="relative">
+      {!pressing && variant === 'floating' && (
         <>
           <div className="absolute inset-0 rounded-full bg-danger-500 opacity-20 voice-pulse-ring" />
           <div
             className="absolute rounded-full bg-danger-500 opacity-10 voice-pulse-ring"
             style={{
-              inset: '-8px',
+              inset: compact ? '-6px' : '-8px',
               animationDelay: '0.5s',
             }}
           />
         </>
       )}
 
-      {/* SOS Button */}
       <button
         onTouchStart={handleStart}
         onTouchEnd={handleEnd}
@@ -86,30 +92,28 @@ const SOSButton: React.FC = () => {
         onMouseDown={handleStart}
         onMouseUp={handleEnd}
         onMouseLeave={handleEnd}
-        className="relative flex items-center justify-center w-[70px] h-[70px] rounded-full bg-danger-500 shadow-lg shadow-danger-500/30 select-none"
+        className="relative flex items-center justify-center rounded-full bg-danger-500 shadow-lg shadow-danger-500/30 select-none"
+        style={{ width: `${buttonSize}px`, height: `${buttonSize}px` }}
         aria-label="SOS紧急求助"
       >
-        {/* Progress ring */}
         {pressing && (
           <svg
             className="absolute inset-0 -rotate-90"
-            width="70"
-            height="70"
-            viewBox="0 0 70 70"
+            width={svgSize}
+            height={svgSize}
+            viewBox={`0 0 ${svgSize} ${svgSize}`}
           >
-            {/* Background circle */}
             <circle
-              cx="35"
-              cy="35"
+              cx={svgSize / 2}
+              cy={svgSize / 2}
               r={radius}
               fill="none"
               stroke="rgba(255,255,255,0.3)"
               strokeWidth="4"
             />
-            {/* Progress circle */}
             <circle
-              cx="35"
-              cy="35"
+              cx={svgSize / 2}
+              cy={svgSize / 2}
               r={radius}
               fill="none"
               stroke="white"
@@ -122,10 +126,22 @@ const SOSButton: React.FC = () => {
           </svg>
         )}
 
-        <span className="text-white font-bold text-[18px] tracking-wider">
+        <span className={`text-white font-bold tracking-wider ${compact ? 'text-[13px]' : 'text-[16px]'}`}>
           SOS
         </span>
       </button>
+    </div>
+  );
+
+  if (variant === 'inline') {
+    return button;
+  }
+
+  return (
+    <div className="fixed inset-x-0 z-40 pointer-events-none" style={{ bottom: '78px' }}>
+      <div className="max-w-lg mx-auto px-3 flex justify-end">
+        <div className="pointer-events-auto">{button}</div>
+      </div>
     </div>
   );
 };

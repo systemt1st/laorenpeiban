@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import Layout from '@/components/Layout';
+import AppErrorBoundary from '@/components/AppErrorBoundary';
 import ChatPage from '@/pages/ChatPage';
 import RemindersPage from '@/pages/RemindersPage';
 import ProfilePage from '@/pages/ProfilePage';
@@ -139,7 +140,9 @@ const App: React.FC = () => {
 
   return (
     <BrowserRouter>
-      <AppRoutes />
+      <AppErrorBoundary>
+        <AppRoutes />
+      </AppErrorBoundary>
     </BrowserRouter>
   );
 };
