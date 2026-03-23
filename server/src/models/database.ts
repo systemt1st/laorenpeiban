@@ -12,7 +12,7 @@ if (!fs.existsSync(dataDir)) {
 const DB_PATH = process.env.DB_PATH || path.join(dataDir, 'companion.db');
 
 // Create database connection
-const db = new Database(DB_PATH);
+const db: Database.Database = new Database(DB_PATH);
 
 // Enable WAL mode for better concurrent read performance
 db.pragma('journal_mode = WAL');

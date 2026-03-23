@@ -3,6 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
+import fs from 'fs';
+import path from 'path';
 import logger from './utils/logger';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 
@@ -126,6 +128,32 @@ app.use('/api/chat', chatRouter);
 app.use('/api/reminders', reminderRouter);
 app.use('/api/emergency', emergencyRouter);
 app.use('/api/family', familyRouter);
+
+// ============================
+// Production static assets
+// ============================
+const staticDirCandidates = [
+  path.resolve(__dirname, '../public'),
+  path.resolve(__dirname, '../../client/dist'),
+];
+const staticDir = staticDirCandidates.find((dir) => fs.existsSync(dir));
+
+if (staticDir) {
+  app.use(express.static(staticDir));
+
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/')) {
+      next();
+      return;
+    }
+
+    res.sendFile(path.join(staticDir, 'index.html'), (err) => {
+      if (err) {
+        next(err);
+      }
+    });
+  });
+}
 
 // ============================
 // 404 handler (must be after all routes)

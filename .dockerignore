@@ -1,0 +1,14 @@
+.git
+.gitignore
+.claude
+client/node_modules
+server/node_modules
+client/dist
+server/dist
+server/data
+server/logs
+server/.env
+.env
+.client.pid
+.server.pid
+*.log

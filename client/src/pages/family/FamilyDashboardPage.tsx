@@ -7,7 +7,6 @@ import {
   Settings,
   LogOut,
   Heart,
-  Shield,
   Check,
   X,
   ArrowLeft,

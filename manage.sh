@@ -1,7 +1,12 @@
 #!/bin/bash
 #
 # 老人陪伴助手 — 一键管理脚本
-# 用法: ./manage.sh [start|stop|restart|status]
+# 推荐用法:
+#   ./start.sh   启动
+#   ./stop.sh    停止
+#   ./restart.sh 重启
+# 其他:
+#   ./manage.sh status
 #
 
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -210,12 +215,13 @@ case "${1:-}" in
         do_status
         ;;
     *)
-        echo "用法: $0 {start|stop|restart|status}"
+        echo "推荐用法:"
+        echo "  ./start.sh   — 启动前端和后端服务"
+        echo "  ./stop.sh    — 停止所有服务"
+        echo "  ./restart.sh — 重启所有服务"
         echo ""
-        echo "  start   — 启动前端和后端服务"
-        echo "  stop    — 停止所有服务"
-        echo "  restart — 重启所有服务"
-        echo "  status  — 查看服务运行状态"
+        echo "其他命令:"
+        echo "  $0 status — 查看服务运行状态"
         exit 1
         ;;
 esac

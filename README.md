@@ -34,21 +34,17 @@
 git clone https://github.com/systemt1st/laorenpeiban.git
 cd laorenpeiban
 
-# 配置环境变量
-cp .env.example .env
+# 首次启动会自动安装依赖，并在缺少配置时创建 server/.env
+./start.sh
 
-# 安装后端依赖并启动
-cd server
-npm install
-npm run dev
+# 停止服务
+./stop.sh
 
-# 新终端，安装前端依赖并启动
-cd client
-npm install
-npm run dev
+# 重启服务
+./restart.sh
 ```
 
-前端访问 http://localhost:5173，后端 API 在 http://localhost:3001。
+前端访问 http://localhost:5173，后端 API 在 http://localhost:8004。
 
 ### Docker 部署
 

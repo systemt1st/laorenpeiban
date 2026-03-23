@@ -29,6 +29,6 @@ COPY --from=client-build /app/client/dist ./public
 
 RUN mkdir -p data logs
 
-EXPOSE 3001 3002
+EXPOSE 3001
 
 CMD ["node", "dist/index.js"]
