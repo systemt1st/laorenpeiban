@@ -1,24 +1,74 @@
 # 老人陪伴助手
 
-面向 60 岁以上老年人的智能陪伴 Web 应用，以语音交互为主要方式，提供日常陪伴对话、生活提醒、应急求助引导三大核心能力。
+老人陪伴助手是一个面向 60 岁以上老年人的智能陪伴 Web 应用，
+以语音交互为主，围绕闲聊陪伴、生活提醒、紧急预警和家属协同
+构建完整闭环。
 
-## 核心功能
+当前仓库对应的是 `v1` 可运行基线：前端采用 `React + TypeScript`，
+后端采用 `Node.js + Express`，数据层基于 `SQLite`。在此基础上，
+项目正在向内部下一代架构 `GoldenAge Guardian（金色年华守护者）`
+演进，目标是从“被动对话”升级为“主动感知”的养老守护系统。
 
-- **语音对话** - 语音识别 + AI 陪伴对话 + 语音播报，支持连续多轮交流
-- **紧急模式** - 高风险语义检测，自动进入紧急求助流程，一键拨打 120 / 联系家人
-- **智能提醒** - 吃药、喝水、复诊等定时提醒，语音播报通知
-- **家属后台** - 对话摘要、提醒执行记录、应急事件追溯
-- **适老化设计** - 超大字体、高对比度、大按钮、语音优先
+## 项目定位
 
-## 技术栈
+- 面向独居或白天独居老人，降低孤独感与突发风险处置门槛
+- 通过语音优先的交互方式，提升老人对数字产品的可用性
+- 通过提醒、风险识别和家属侧追踪能力，形成照护闭环
 
-| 层级 | 技术 |
-|------|------|
-| 前端 | React 18 + TypeScript + Vite + TailwindCSS + PWA |
-| 后端 | Node.js + Express + SQLite (better-sqlite3) |
-| 语音 | Web Speech API (STT + TTS) |
-| AI | OpenAI 兼容 API / 内置回复引擎 |
-| 部署 | Docker + Nginx |
+## 当前实现与目标态
+
+### 当前实现（v1 基线）
+
+- 语音对话：支持 STT、AI 回复和 TTS 播报
+- 智能提醒：支持吃药、喝水、复诊等提醒能力
+- 紧急模式：支持高风险关键词检测、SOS 页面和紧急联系人流程
+- 家属后台：支持查看摘要、提醒记录和应急事件
+- 轻量部署：支持本地启动与 Docker 部署
+
+### 目标态（GoldenAge Guardian）
+
+- 主动感知：从被动回复升级为持续风险感知与上下文回溯
+- 多智能体协同：引入 Supervisor + 核心业务 Agent 的任务分发模型
+- 分层记忆：构建热记忆、长程记忆、事实库和本地灾备
+- 医学 RAG：通过受控知识库约束健康类回答与预警逻辑
+- 工程化增强：补足可观测性、安全沙箱与异步通知闭环
+
+## 核心能力
+
+- **闲聊陪伴**：通过温和、自然的语音对话缓解孤独感
+- **健康关注**：围绕身体不适表达与风险信号进行非诊断式关注与提示
+- **紧急预警**：对高风险表达进行分级响应，必要时触发求助流程
+- **生活助记**：围绕吃药、喝水、复诊等场景建立提醒闭环
+- **家属协同**：让家属查看摘要、提醒执行情况与异常事件记录
+
+## 系统概览
+
+### v1 当前架构
+
+- 前端：`React 18`、`TypeScript`、`Vite`、`TailwindCSS`、`PWA`
+- 后端：`Node.js`、`Express`
+- 数据：`SQLite (better-sqlite3)`
+- 语音：`Web Speech API`
+- AI：`OpenAI 兼容 API / 内置回复引擎`
+- 部署：`Docker + Nginx`
+
+### v2 目标架构
+
+- 感知层：语音输入、文字输入，以及可扩展的多终端接入能力
+- 编排层：基于 `Spring AI Advisor` 链或类 `LangGraph` 状态机，由 Supervisor 统一分发到陪伴智能体、健康哨兵、生活助手
+- 执行层：医学 RAG 检索、提醒调度、通知联络、天气查询等工具适配与安全沙箱
+- 数据层：`Redis + PostgreSQL/pgvector + 结构化事实库 + 本地灾备`
+
+## 文档导航
+
+- [产品需求文档](docs/PRD.md)
+- [GoldenAge Guardian 架构设计](docs/architecture/goldenage-guardian.md)
+
+建议阅读顺序：
+
+1. 先看 `README` 了解项目现状与目标态
+2. 再看 `docs/PRD.md` 了解业务场景、能力边界与路线图
+3. 最后看 `docs/architecture/goldenage-guardian.md` 理解下一代系统设计
 
 ## 快速开始
 
@@ -44,43 +94,47 @@ cd laorenpeiban
 ./restart.sh
 ```
 
-前端访问 http://localhost:5173，后端 API 在 http://localhost:8004。
+前端访问 `http://localhost:5173`，后端 API 在 `http://localhost:8004`。
 
 ### Docker 部署
 
 ```bash
-# 构建并启动
 docker-compose up -d
+```
 
-# 访问
+访问：
+
+```text
 http://your-server-ip
 ```
 
 ## 项目结构
 
-```
-├── docs/               # 产品文档
-│   └── PRD.md          # 产品需求文档
-├── client/             # 前端 (React + TypeScript)
+```text
+├── docs/
+│   ├── PRD.md
+│   └── architecture/
+│       └── goldenage-guardian.md
+├── client/
 │   ├── src/
-│   │   ├── components/ # 通用组件 (Layout, NavBar, SOSButton, VoiceButton)
-│   │   ├── pages/      # 页面 (Chat, Reminders, Profile, Emergency, Setup, Family)
-│   │   ├── hooks/      # 自定义 Hooks (语音识别, 语音合成, 对话管理)
-│   │   ├── stores/     # Zustand 状态管理
-│   │   ├── services/   # API 服务层
-│   │   ├── utils/      # 工具函数
-│   │   └── types/      # TypeScript 类型定义
-│   └── public/         # 静态资源 + PWA
-├── server/             # 后端 (Node.js + Express)
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── stores/
+│   │   ├── types/
+│   │   └── utils/
+│   └── public/
+├── server/
 │   └── src/
-│       ├── routes/     # API 路由 (users, chat, reminders, emergency, family)
-│       ├── services/   # 业务服务 (AI 对话, 紧急检测)
-│       ├── models/     # 数据库模型
-│       ├── middleware/  # 中间件 (认证, 错误处理)
-│       └── utils/      # 工具 (日志, 验证)
-├── docker-compose.yml  # Docker 编排
-├── Dockerfile          # Docker 镜像
-└── nginx.conf          # Nginx 配置
+│       ├── middleware/
+│       ├── models/
+│       ├── routes/
+│       ├── services/
+│       └── utils/
+├── docker-compose.yml
+├── Dockerfile
+└── nginx.conf
 ```
 
 ## 环境变量
@@ -90,8 +144,15 @@ http://your-server-ip
 | PORT | 服务端口 | 3001 |
 | AI_API_KEY | AI API 密钥 | - |
 | AI_API_BASE_URL | AI API 地址 | https://api.openai.com/v1 |
-| AI_MODEL | AI 模型 | gpt-3.5-turbo |
+| AI_MODEL | AI 模型 | Qwen/Qwen3.5-4B |
 | DB_PATH | 数据库路径 | ./data/companion.db |
+
+## Roadmap
+
+- Phase 1：迁移到 `PostgreSQL + Redis`，建立分层记忆与持久化基座
+- Phase 2：引入工具调用，落地提醒、预警、通知等闭环动作
+- Phase 3：引入 Supervisor 模式，完成多 Agent 分流与协同编排
+- Phase 4：补齐 `Kryo + 本地文件灾备` 与极端环境鲁棒性能力
 
 ## 许可证
 
